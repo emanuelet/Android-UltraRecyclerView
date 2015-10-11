@@ -449,6 +449,9 @@ public class UltraRecyclerView extends FrameLayout {
         mRecyclerView.setVisibility(View.VISIBLE);
         mProgressViewStub.setVisibility(View.GONE);
         mSwipeRefreshLayout.setRefreshing(false);
+        if (getAdapter() == null || getAdapter().getItemCount() == 0) {
+            manageEmptyViewVisibility();
+        }
     }
 
     private void manageEmptyViewVisibility() {
