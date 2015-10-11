@@ -2,7 +2,9 @@ package co.nullindustries.ultrarecyclerview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
+import android.support.annotation.LayoutRes;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,8 +25,6 @@ public class UltraRecyclerView extends FrameLayout {
         GRID,
         STAGGERED_GRID
     }
-
-    //<editor-fold desc="Attributes">
 
     protected RecyclerView mRecyclerView;
     protected ViewStub mProgressViewStub;
@@ -107,7 +107,7 @@ public class UltraRecyclerView extends FrameLayout {
 
         mProgressViewStub = (ViewStub) layout.findViewById(android.R.id.progress);
         mProgressViewStub.setLayoutResource(mProgressId);
-        mProgressView = mProgressViewStub.inflate();
+        if (mProgressId != 0) mProgressView = mProgressViewStub.inflate();
 
         mMoreProgressViewStub = (ViewStub) layout.findViewById(R.id.more_progress);
         mMoreProgressViewStub.setLayoutResource(mMoreProgressId);
@@ -190,7 +190,7 @@ public class UltraRecyclerView extends FrameLayout {
                         mSwipeDismissScrollListener.onScrollStateChanged(recyclerView, newState);
                 }
             };
-            mRecyclerView.setOnScrollListener(mInternalOnScrollListener);
+            mRecyclerView.addOnScrollListener(mInternalOnScrollListener);
 
             if (mPadding != -1.0f) {
                 mRecyclerView.setPadding(mPadding, mPadding, mPadding, mPadding);
@@ -209,8 +209,8 @@ public class UltraRecyclerView extends FrameLayout {
     //<editor-fold desc="Setters/Getters">
 
     /**
-     * @see co.nullindustries.ultrarecyclerview.Decorators.DividerItemDecoration
      * @param decorator
+     * @see co.nullindustries.ultrarecyclerview.Decorators.DividerItemDecoration
      */
     public void setItemDecorator(RecyclerView.ItemDecoration decorator) {
         mRecyclerView.addItemDecoration(decorator);
@@ -229,7 +229,7 @@ public class UltraRecyclerView extends FrameLayout {
             manageEmptyViewVisibility();
         }
 
-        if (adapter != null ) {
+        if (adapter != null) {
             mAdapterDataObserver = new RecyclerView.AdapterDataObserver() {
                 @Override
                 public void onItemRangeChanged(int positionStart, int itemCount) {
@@ -309,7 +309,7 @@ public class UltraRecyclerView extends FrameLayout {
         mSwipeRefreshLayout.setColorSchemeResources(colRes1, colRes2, colRes3, colRes4);
     }
 
-    public void setRefreshingColor(int col1, int col2, int col3, int col4) {
+    public void setRefreshingColor(@ColorInt int col1, @ColorInt int col2, @ColorInt int col3, @ColorInt int col4) {
         mSwipeRefreshLayout.setColorSchemeColors(col1, col2, col3, col4);
     }
 
@@ -389,6 +389,24 @@ public class UltraRecyclerView extends FrameLayout {
         return mEmptyView;
     }
 
+    public void setEmptyView(@LayoutRes int res) {
+        mEmptyId = res;
+        mEmptyViewStub.setLayoutResource(res);
+        if (mEmptyId != 0) mEmptyView = mEmptyViewStub.inflate();
+    }
+
+    public void setProgressView(@LayoutRes int res) {
+        mProgressId = res;
+        mProgressViewStub.setLayoutResource(res);
+        if (mProgressId != 0) mProgressView = mProgressViewStub.inflate();
+    }
+
+    public void setMoreProgressView(@LayoutRes int res) {
+        mMoreProgressId = res;
+        mMoreProgressViewStub.setLayoutResource(res);
+        if (mMoreProgressId != 0) mMoreProgressView = mMoreProgressViewStub.inflate();
+    }
+
     public boolean isLoadingMore() {
         return isLoadingMore;
     }
@@ -396,9 +414,6 @@ public class UltraRecyclerView extends FrameLayout {
     public boolean isRefresing() {
         return mSwipeRefreshLayout.isRefreshing();
     }
-    //</editor-fold>
-
-    //<editor-fold desc="Visibility">
 
     /**
      * Show the progressbar
@@ -452,7 +467,6 @@ public class UltraRecyclerView extends FrameLayout {
         mRecyclerView.setVisibility(View.GONE);
     }
 
-    //</editor-fold>
 
     private int findMax(int[] values) {
         int max = Integer.MIN_VALUE;
