@@ -20,6 +20,8 @@ import co.nullindustries.ultrarecyclerview.swipe.SwipeDismissRecyclerViewTouchLi
 
 public class UltraRecyclerView extends FrameLayout {
 
+    private boolean isEmptyShowing;
+
     public enum LayoutManagerType {
         LINEAR,
         GRID,
@@ -204,9 +206,6 @@ public class UltraRecyclerView extends FrameLayout {
         }
     }
 
-    //</editor-fold>
-
-    //<editor-fold desc="Setters/Getters">
 
     /**
      * @param decorator
@@ -455,10 +454,12 @@ public class UltraRecyclerView extends FrameLayout {
     }
 
     private void manageEmptyViewVisibility() {
-        if (mEmptyId != 0 && mRecyclerView.getAdapter().getItemCount() == 0) {
+        if (mEmptyId != 0 && getAdapter().getItemCount() == 0 && !isEmptyShowing) {
             mEmptyViewStub.setVisibility(View.VISIBLE);
+            isEmptyShowing = true;
             hideProgressViews();
         } else {
+            isEmptyShowing = false;
             mEmptyViewStub.setVisibility(View.GONE);
         }
     }
